@@ -1,8 +1,12 @@
 @propertyWrapper
-struct Inject<Dependency> {
+public struct Inject<Dependency> {
+    
     private var dependency: Dependency!
-    init() {}
-
+    
+    init(dependency: Dependency) {
+        self.dependency = dependency
+    }
+    
     public var wrappedValue: Dependency {
         mutating get {
             if dependency == nil {
