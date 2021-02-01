@@ -1,7 +1,7 @@
 @propertyWrapper
 struct Inject<Dependency> {
     
-    var dependency: Dependency!
+    public var dependency: Dependency!
     
     var wrappedValue: Dependency {
         mutating get {
