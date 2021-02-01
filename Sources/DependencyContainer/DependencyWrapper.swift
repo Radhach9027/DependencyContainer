@@ -1,9 +1,9 @@
 @propertyWrapper
 struct Inject<Dependency> {
-    
-    public var dependency: Dependency!
-    
-    var wrappedValue: Dependency {
+    private var dependency: Dependency!
+    init() {}
+
+    public var wrappedValue: Dependency {
         mutating get {
             if dependency == nil {
                 let copy: Dependency = Dependencies.shared.resolve()
