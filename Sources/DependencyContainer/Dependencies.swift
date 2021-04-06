@@ -19,7 +19,7 @@ open class Dependencies {
     deinit { modules.removeAll() }
 }
 
-private extension Dependencies {
+public extension Dependencies {
     static var root = Dependencies()
     
     func add(module: Dependency) {
