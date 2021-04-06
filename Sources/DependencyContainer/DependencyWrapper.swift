@@ -3,7 +3,7 @@ public struct Inject<Dependency> {
     
     private var dependency: Dependency!
     
-    init(dependency: Dependency) {
+    public init(dependency: Dependency) {
         self.dependency = dependency
     }
     
