@@ -1,7 +1,7 @@
 @propertyWrapper
 public class Inject<Value> {
-    private let name: String?
-    private var storage: Value?
+    public let name: String?
+    public var storage: Value?
     
     public var wrappedValue: Value {
         storage ?? {

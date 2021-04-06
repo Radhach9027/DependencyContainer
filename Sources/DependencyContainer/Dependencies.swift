@@ -15,7 +15,7 @@ open class Dependencies {
         Self.root = self
     }
     
-    fileprivate init() {}
+    public init() {}
     deinit { modules.removeAll() }
 }
 
