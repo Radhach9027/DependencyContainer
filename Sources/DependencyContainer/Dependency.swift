@@ -1,16 +1,9 @@
 public struct Dependency {
+    fileprivate let name: String
+    fileprivate let resolve: () -> Any
     
-    public typealias ResolveBlock<T> = () -> T
-    
-    private(set) var value: Any!
-    private let resolveBlock: ResolveBlock<Any>
-    let name: String
-    
-    public init<T>(_ block: @escaping ResolveBlock<T>) {
-        resolveBlock = block
-        name = String(describing: T.self)
-    }
-    mutating func resolve() {
-        value = resolveBlock()
+    public init<T>(_ name: String? = nil, _ resolve: @escaping () -> T) {
+        self.name = name ?? String(describing: T.self)
+        self.resolve = resolve
     }
 }

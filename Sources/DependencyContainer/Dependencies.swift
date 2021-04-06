@@ -1,56 +1,46 @@
 import Foundation
 
-public protocol DependenciesProtocol {
-    func register(_ dependency: Dependency)
-    func build()
-    func resolve<T>() -> T
-    func clear()
+open class Dependencies {
+    private var modules = [String: Dependency]()
+    
+    public init(@ModuleBuilder _ modules: () -> [Dependency]) {
+        modules().forEach { add(module: $0) }
+    }
+    
+    public init(@ModuleBuilder _ module: () -> Dependency) {
+        add(module: module())
+    }
+    
+    open func build() {
+        Self.root = self
+    }
+    
+    fileprivate init() {}
+    deinit { modules.removeAll() }
 }
 
-public class Dependencies {
+private extension Dependencies {
+    static var root = Dependencies()
     
-    static private(set) var shared = Dependencies()
-    fileprivate var dependencies = [Dependency]()
-    
-    public convenience init(@DependencyBuilder _ dependencies: () -> [Dependency]) {
-        self.init()
-        dependencies().forEach { register($0) }
+    func add(module: Dependency) {
+        modules[module.name] = module
     }
     
-    public convenience init(@DependencyBuilder _ dependency: () -> Dependency) {
-        self.init()
-        register(dependency())
+    func resolve<T>(for name: String? = nil) -> T {
+        let name = name ?? String(describing: T.self)
+        
+        guard let component: T = modules[name]?.resolve() as? T else {
+            fatalError("Dependency '\(T.self)' not resolved!")
+        }
+        
+        return component
     }
 }
 
-
-extension Dependencies: DependenciesProtocol{
+public extension Dependencies {
     
-    public func register(_ dependency: Dependency) {
-        guard dependencies.firstIndex(where: { $0.name == dependency.name }) == nil else {
-            debugPrint("\(String(describing: dependency.name)) already registered, let's ignore")
-            return
-        }
-        dependencies.append(dependency)
-    }
-    
-    public func build() {
-        for index in dependencies.startIndex..<dependencies.endIndex {
-            dependencies[index].resolve()
-        }
-        Self.shared = self
-    }
-    
-    public func resolve<T>() -> T {
-        guard let dependency = dependencies.first(where: { $0.value is T })?.value as? T else {
-            fatalError("Can't resolve \(T.self)")
-        }
-        return dependency
-    }
-    
-    public func clear() {
-        if dependencies.count > 0 {
-            dependencies.removeAll()
-        }
+    @_functionBuilder struct ModuleBuilder {
+        public static func buildBlock(_ modules: Dependency...) -> [Dependency] { modules }
+        public static func buildBlock(_ module: Dependency) -> Dependency { module }
     }
 }

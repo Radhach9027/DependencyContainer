@@ -1,22 +1,21 @@
 @propertyWrapper
-public struct Inject<Dependency> {
+public class Inject<Value> {
+    private let name: String?
+    private var storage: Value?
     
-    private var dependency: Dependency!
-    
-    public init(dependency: Dependency) {
-        self.dependency = dependency
+    public var wrappedValue: Value {
+        storage ?? {
+            let value: Value = Dependencies.root.resolve(for: name)
+            storage = value
+            return value
+        }()
     }
     
-    public var wrappedValue: Dependency {
-        mutating get {
-            if dependency == nil {
-                let copy: Dependency = Dependencies.shared.resolve()
-                self.dependency = copy
-            }
-            return dependency
-        }
-        mutating set {
-            dependency = newValue
-        }
+    public init() {
+        self.name = nil
+    }
+    
+    public init(_ name: String) {
+        self.name = name
     }
 }
