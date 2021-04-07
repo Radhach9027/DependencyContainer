@@ -15,8 +15,12 @@ open class Dependencies {
         Self.root = self
     }
     
+    open func remove() {
+        modules.removeAll()
+    }
+    
     public init() {}
-    deinit { modules.removeAll() }
+    deinit { remove() }
 }
 
 public extension Dependencies {
